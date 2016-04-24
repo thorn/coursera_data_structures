@@ -14,11 +14,11 @@ def getParent(table):
       parent[table] = getParent(parent[table])
     return parent[table]
 
-def merge(destination, source):
+def merge(destination, source, max_lines):
     realDestination, realSource = getParent(destination), getParent(source)
 
     if realDestination == realSource:
-      return(max(lines))
+      return(max_lines)
 
     # merge two components
     # use union by rank heuristic
@@ -26,17 +26,18 @@ def merge(destination, source):
     if rank[realDestination] > rank[realSource]:
       parent[realSource] = realDestination
       lines[realDestination] += lines[realSource]
+      new_max = max(max_lines, lines[realDestination])
     else:
       parent[realDestination] = realSource
       if rank[realDestination] == rank[realSource]:
         rank[realSource] += 1
       lines[realSource] += lines[realDestination]
-    return(max(lines))
+      new_max = max(max_lines, lines[realSource])
 
-    return True
+    return(new_max)
 
 for i in range(m):
     destination, source = map(int, sys.stdin.readline().split())
-    print(merge(destination - 1, source - 1))
-    # print(ans)
+    ans = merge(destination - 1, source - 1, ans)
+    print(ans)
 
