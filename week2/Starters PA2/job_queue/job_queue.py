@@ -1,17 +1,13 @@
 # python3
 
 class CustomHeapSort:
-  def __init__(self, data = [], key=None, arity=2):
+  def __init__(self, data = [], key=None):
     self.data = data
     self.key = key
     self.tree_size = len(data)
-    self.arity = arity
 
   def parent(self, i):
     return (i - 1) // 2
-
-  def children(self, i):
-    return range((i - 1) * self.arity + 3, min(self.tree_size, (i - 1)*self.arity + self.arity + 3))
 
   def sift_up(self, i):
     while i > 0 and self.parent_value(i) > self.value_at(i):
@@ -20,12 +16,19 @@ class CustomHeapSort:
 
   def sift_down(self, i):
     min_index = i
-    for child in self.children(i):
-      if child < self.tree_size:
-        if ((self.value_at(child) == self.value_at(min_index)) and (self.data[child][0] < self.data[min_index][0])):
-          min_index = child
-        if (self.value_at(child) < self.value_at(min_index)):
-          min_index = child
+    l = 2 * i + 1
+    if l < self.tree_size:
+      if self.data[l][1] == self.data[min_index][1] and self.data[l][0] < self.data[min_index][0]:
+        min_index = l
+      if self.data[l][1] < self.data[min_index][1]:
+        min_index = l
+
+    r = 2 * i + 2
+    if r < self.tree_size:
+      if self.data[r][1] == self.data[min_index][1] and self.data[r][0] < self.data[min_index][0]:
+        min_index = r
+      if self.data[r][1] < self.data[min_index][1]:
+        min_index = r
 
     if i != min_index:
       self.swap(i, min_index)
