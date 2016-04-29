@@ -16,6 +16,18 @@ def write_responses(result):
 
 def process_queries(queries):
     result = []
+    contacts = strs = ["not found" for x in range(10000000)]
+    for cur_query in queries:
+        if cur_query.type == 'add':
+            contacts[cur_query.number] = cur_query.name
+        elif cur_query.type == 'del':
+            contacts[cur_query.number] = "not found"
+        else:
+            result.append(contacts[cur_query.number])
+    return result
+
+def naive_process_queries(queries):
+    result = []
     # Keep list of all existing (i.e. not deleted yet) contacts.
     contacts = []
     for cur_query in queries:
