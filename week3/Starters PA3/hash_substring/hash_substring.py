@@ -41,12 +41,5 @@ def get_occurrences(pattern, text):
 
   return result
 
-def get_occurrences(pattern, text):
-    return [
-        i
-        for i in range(len(text) - len(pattern) + 1)
-        if text[i:i + len(pattern)] == pattern
-    ]
-
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
