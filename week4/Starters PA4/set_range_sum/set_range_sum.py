@@ -37,7 +37,7 @@ def smallRotation(v):
   if grandparent != None:
     if grandparent.left == parent:
       grandparent.left = v
-    else: 
+    else:
       grandparent.right = v
 
 def bigRotation(v):
@@ -48,8 +48,8 @@ def bigRotation(v):
   elif v.parent.right == v and v.parent.parent.right == v.parent:
     # Zig-zig
     smallRotation(v.parent)
-    smallRotation(v)    
-  else: 
+    smallRotation(v)
+  else:
     # Zig-zag
     smallRotation(v);
     smallRotation(v);
@@ -74,27 +74,27 @@ def splay(v):
 # bigger key (next value in the order).
 # If the key is bigger than all keys in the tree,
 # then result is None.
-def find(root, key): 
+def find(root, key):
   v = root
   last = root
   next = None
   while v != None:
     if v.key >= key and (next == None or v.key < next.key):
-      next = v    
+      next = v
     last = v
     if v.key == key:
-      break    
+      break
     if v.key < key:
       v = v.right
-    else: 
-      v = v.left      
+    else:
+      v = v.left
   root = splay(last)
   return (next, root)
 
-def split(root, key):  
-  (result, root) = find(root, key)  
-  if result == None:    
-    return (root, None)  
+def split(root, key):
+  (result, root) = find(root, key)
+  if result == None:
+    return (root, None)
   right = splay(result)
   left = right.left
   right.left = None
@@ -104,7 +104,7 @@ def split(root, key):
   update(right)
   return (left, right)
 
-  
+
 def merge(left, right):
   if left == None:
     return right
@@ -117,9 +117,9 @@ def merge(left, right):
   update(right)
   return right
 
-  
+
 # Code that uses splay tree to solve the problem
-                                    
+
 root = None
 
 def insert(x):
@@ -127,27 +127,34 @@ def insert(x):
   (left, right) = split(root, x)
   new_vertex = None
   if right == None or right.key != x:
-    new_vertex = Vertex(x, x, None, None, None)  
+    new_vertex = Vertex(x, x, None, None, None)
   root = merge(merge(left, new_vertex), right)
-  
-def erase(x): 
+
+def erase(x):
   global root
   # Implement erase yourself
-  pass
+  (left, right) = split(root, x)
+  (right1, right2) = split(right, x + 1)
+  root = merge(left, right2)
 
-def search(x): 
+def search(x):
   global root
   # Implement find yourself
-  
+  result, root = find(root, x)
+  if not result: return False
+  return result.key == x
   return False
-  
-def sum(fr, to): 
+
+def dosum(fr, to):
   global root
   (left, middle) = split(root, fr)
   (middle, right) = split(middle, to + 1)
   ans = 0
-  # Complete the implementation of sum
-
+  if middle == None:
+    root = merge(left, right)
+    return 0
+  ans = middle.sum
+  root = merge(merge(left, middle), right)
   return ans
 
 MODULO = 1000000001
@@ -167,6 +174,68 @@ for i in range(n):
   elif line[0] == 's':
     l = int(line[1])
     r = int(line[2])
-    res = sum((l + last_sum_result) % MODULO, (r + last_sum_result) % MODULO)
+    res = dosum((l + last_sum_result) % MODULO, (r + last_sum_result) % MODULO)
     print(res)
     last_sum_result = res % MODULO
+
+
+# import random
+
+# def print_result(operations):
+#   for operation in operations:
+#     print(operation)
+
+# def random_test():
+#     maxnumber = 10 #as you need
+#     operations = []
+#     values = []
+#     while True:
+#         op = random.randrange(5)
+#         if op == 0 or op == 1:
+#             arg = random.randrange(maxnumber) + 1
+#             insert(arg)
+#             operations.append("insert(" + str(arg) +")")
+#             if arg not in values:
+#               values.append(arg)
+#         if op == 2:
+#             if len(values) > 0:
+#                 index = random.randrange(len(values))
+#                 arg = values[index]
+#             else:
+#                 arg = random.randrange(maxnumber) + 1
+#             erase(arg)
+#             operations.append("erase(" + str(arg)+")")
+#             if arg in values:
+#               values.remove(arg)
+
+#         if op == 3:
+#             prob = random.randrange(2)
+#             if prob == 0:
+#                 if len(values) > 0:
+#                     index = random.randrange(len(values))
+#                     arg = values[index]
+#                 else:
+#                     arg = random.randrange(maxnumber) + 1
+#             else:
+#                 arg = random.randrange(maxnumber)
+#             ret = search(arg)
+#             operations.append("search(" + str(arg)+")")
+#             if (ret and arg not in values) or (not ret and arg in values):
+#                 print("failed search " + str(arg))
+#                 print_result(operations)
+#                 print(values)
+#                 break
+
+#         if op == 4:
+#             arg = random.randrange(maxnumber//3)
+#             arg2 = random.randrange(arg, maxnumber)
+#             test = dosum(arg, arg2)
+#             total = sum(x for x in values if x >= arg and x <= arg2)
+#             operations.append("test = dosum(" + str(arg) +", " + str(arg2) +")")
+#             if test != total:
+#                 print("failed sum got-expected", test, total)
+#                 print_result(operations)
+#                 print(values)
+#                 break
+#         print("all is going well")
+# random_test()
